@@ -12,5 +12,6 @@ node_modules
 !.yarn/cache
 #.pnp.*
 
-reports
+reports/*
+!reports/.gitkeep
 .idea
