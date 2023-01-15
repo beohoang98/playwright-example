@@ -1,8 +1,10 @@
 {
   "name": "playwright",
   "packageManager": "yarn@3.3.0",
+  "private": true,
   "scripts": {
-    "start": "cucumber-js --parallel 3"
+    "start": "cucumber-js --parallel 3",
+    "gen:report": "node ./gen-report.js"
   },
   "dependencies": {
     "@cucumber/cucumber": "^8.9.0",

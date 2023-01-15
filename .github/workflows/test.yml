@@ -9,17 +9,24 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
           cache: yarn
+
       - name: Install
         run: |
           yarn --immutable
-          yarn playwright install-deps chromium
-      - name: Test
+          yarn playwright install msedge
+          yarn playwright install-deps msedge
+
+      - name: Run Test
         run: yarn start || exit 0;
+
+      - name: Generate HTML Report
+        run: yarn test:report
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
