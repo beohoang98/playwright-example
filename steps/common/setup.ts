@@ -24,7 +24,7 @@ class TestWorld extends World implements ITestWorld {
 
   async init() {
     this.context = await global.browser.newContext({
-      baseURL: "https://cypress.io",
+      baseURL: this.parameters.baseURL,
       viewport: {
         width: 1920,
         height: 1080,
@@ -42,8 +42,8 @@ const skipError = () => {
 
 BeforeAll(async function () {
   global.browser = await chromium.launch({
-    // headless: false,
     downloadsPath: "reports/downloads",
+    headless: false,
   });
   fs.rm("reports/videos", { recursive: true, force: true }, skipError);
   fs.rm("reports/downloads", { recursive: true, force: true }, skipError);
