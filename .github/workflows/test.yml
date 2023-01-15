@@ -26,7 +26,7 @@ jobs:
         run: yarn start || exit 0;
 
       - name: Generate HTML Report
-        run: yarn test:report
+        run: yarn gen:report
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
