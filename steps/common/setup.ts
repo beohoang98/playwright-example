@@ -43,7 +43,6 @@ const skipError = () => {
 BeforeAll(async function () {
   global.browser = await chromium.launch({
     downloadsPath: "reports/downloads",
-    headless: false,
   });
   fs.rm("reports/videos", { recursive: true, force: true }, skipError);
   fs.rm("reports/downloads", { recursive: true, force: true }, skipError);
