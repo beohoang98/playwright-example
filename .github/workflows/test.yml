@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: test-report-${{ matrix.browser }}
-          path: reports/*.{xml,json}
+          path: reports/*
 
   report:
     name: "Report"
