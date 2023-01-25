@@ -77,12 +77,12 @@ setWorldConstructor(TestWorld);
 setDefaultTimeout(30000);
 
 const cleanDir = (path: string) => {
-  const skipError = () => {
-    // do nothing
-  };
-  fs.rm(path, { recursive: true, force: true }, () => {
-    fs.mkdir(path, { recursive: true }, skipError);
-  });
+  try {
+    fs.rmSync(path, { recursive: true, force: true });
+    fs.mkdirSync(path, { recursive: true });
+  } catch (error) {
+    console.warn(error);
+  }
 };
 
 BeforeAll(async function () {
