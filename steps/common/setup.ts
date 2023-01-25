@@ -9,7 +9,14 @@ import {
   setWorldConstructor,
   World,
 } from "@cucumber/cucumber";
-import { BrowserContext, chromium, Page } from "@playwright/test";
+import {
+  BrowserContext,
+  chromium,
+  devices,
+  firefox,
+  Page,
+  webkit,
+} from "@playwright/test";
 import { ITestWorld } from "../../types/world";
 import * as fs from "fs";
 
@@ -18,18 +25,50 @@ class TestWorld extends World implements ITestWorld {
 
   context!: BrowserContext;
 
+  options: IWorldOptions;
+
   constructor(opts: IWorldOptions) {
     super(opts);
+    this.options = opts;
   }
 
   async init() {
-    this.context = await global.browser.newContext({
-      baseURL: this.parameters.baseURL,
-      viewport: {
-        width: 1920,
-        height: 1080,
-      },
-    });
+    const { parameters } = this.options;
+    switch (parameters.browser) {
+      case "firefox":
+        global.browser = await firefox.launch({
+          downloadsPath: "reports/downloads",
+        });
+        this.context = await global.browser.newContext({
+          baseURL: this.parameters.baseURL,
+          ...devices["Desktop Firefox"],
+        });
+        break;
+      case "webkit":
+        global.browser = await webkit.launch({
+          downloadsPath: "reports/downloads",
+        });
+        this.context = await global.browser.newContext({
+          baseURL: this.parameters.baseURL,
+          ...devices["Desktop Safari"],
+        });
+        break;
+      case "chrome":
+      default:
+        global.browser = await chromium.launch({
+          downloadsPath: "reports/downloads",
+        });
+        this.context = await global.browser.newContext({
+          baseURL: this.parameters.baseURL,
+          ...devices["Desktop Chrome"],
+        });
+        break;
+    }
+  }
+
+  async teardown() {
+    await this.context.close();
+    await global.browser.close();
   }
 }
 
@@ -41,17 +80,12 @@ const skipError = () => {
 };
 
 BeforeAll(async function () {
-  global.browser = await chromium.launch({
-    downloadsPath: "reports/downloads",
-  });
   fs.rm("reports/videos", { recursive: true, force: true }, skipError);
   fs.rm("reports/downloads", { recursive: true, force: true }, skipError);
   fs.rm("reports/screenshots", { recursive: true, force: true }, skipError);
 });
 
-AfterAll(async function (this: TestWorld) {
-  await global.browser.close();
-});
+AfterAll(async function () {});
 
 Before(async function (this: TestWorld) {
   await this.init();
@@ -59,6 +93,7 @@ Before(async function (this: TestWorld) {
 });
 After(async function (this: TestWorld) {
   await this.page.close();
+  await this.teardown();
 });
 AfterStep(async function (this: TestWorld, param) {
   if (param.result.status === "FAILED") {

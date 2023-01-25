@@ -7,6 +7,10 @@ jobs:
   test:
     name: Install then test
     runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        browser: [ chrome, firefox, webkit ]
+
     steps:
       - uses: actions/checkout@v3
 
@@ -19,11 +23,37 @@ jobs:
       - name: Install
         run: |
           yarn --immutable
-          yarn playwright install msedge
-          yarn playwright install-deps msedge
+          yarn playwright install ${{ matrix.browser }}
 
       - name: Run Test
-        run: yarn start || exit 0;
+        continue-on-error: true
+        run: yarn test --profile ${{ matrix.browser }}
+
+      - name: Upload Test Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-report-${{ matrix.browser }}
+          path: reports/*.{xml,json}
+
+  report:
+    name: "Report"
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@v2
+        with:
+          path: reports
+
+      - name: Install deps
+        run: yarn --immutable
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        with:
+          name: JUnit            # Name of the check run which will be created
+          path: reports/*.xml    # Path to test results
+          reporter: jest-junit        # Format of test results
 
       - name: Generate HTML Report
         run: yarn gen:report
