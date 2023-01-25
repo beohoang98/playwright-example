@@ -67,22 +67,28 @@ class TestWorld extends World implements ITestWorld {
   }
 
   async teardown() {
-    await this.context.close();
-    await global.browser.close();
+    await this.page?.close();
+    await this.context?.close();
+    await global.browser?.close();
   }
 }
 
 setWorldConstructor(TestWorld);
 setDefaultTimeout(30000);
 
-const skipError = () => {
-  /** */
+const cleanDir = (path: string) => {
+  const skipError = () => {
+    // do nothing
+  };
+  fs.rm(path, { recursive: true, force: true }, () => {
+    fs.mkdir(path, { recursive: true }, skipError);
+  });
 };
 
 BeforeAll(async function () {
-  fs.rm("reports/videos", { recursive: true, force: true }, skipError);
-  fs.rm("reports/downloads", { recursive: true, force: true }, skipError);
-  fs.rm("reports/screenshots", { recursive: true, force: true }, skipError);
+  cleanDir("reports/downloads");
+  cleanDir("reports/screenshots");
+  cleanDir("reports/videos");
 });
 
 AfterAll(async function () {});
@@ -92,7 +98,6 @@ Before(async function (this: TestWorld) {
   this.page = await this.context.newPage();
 });
 After(async function (this: TestWorld) {
-  await this.page.close();
   await this.teardown();
 });
 AfterStep(async function (this: TestWorld, param) {
