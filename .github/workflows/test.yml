@@ -24,6 +24,7 @@ jobs:
         run: |
           yarn --immutable
           yarn playwright install ${{ matrix.browser }}
+          yarn playwright install-deps ${{ matrix.browser }}
 
       - name: Run Test
         continue-on-error: true
@@ -60,14 +61,13 @@ jobs:
       - name: Install deps
         run: yarn --immutable
 
-      - name: Test Report
-        uses: dorny/test-reporter@v1
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v3
         with:
-          name: JUnit            # Name of the check run which will be created
-          path: reports/*.xml    # Path to test results
-          reporter: jest-junit        # Format of test results
+          report_paths: 'reports/*.xml'
 
       - name: Generate HTML Report
+        if: always()
         run: yarn gen:report
 
       - name: Deploy
