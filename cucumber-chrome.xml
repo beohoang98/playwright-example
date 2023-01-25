@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<testsuite failures="0" skipped="0" name="cucumber-js" time="4.22341884" tests="2">
+  <testcase classname="Bookstore" name="Bookstore desktop - Verify Bookstore" time="2.349094018">
+    <system-out><![CDATA[Given Go to homepage on desktop screen....................................passed
+Then Verify Required Elements on Bookstore................................passed
+Then Verify book list:....................................................passed
+When User search for "Java"...............................................passed
+Then Verify book list:....................................................passed
+When User search for "Selenium"...........................................passed
+Then Verify book list:....................................................passed]]></system-out>
+  </testcase>
+  <testcase classname="Bookstore" name="Bookstore mobile - Verify Bookstore" time="1.8743248219999997">
+    <system-out><![CDATA[Given Go to homepage on mobile screen.....................................passed
+Then Verify Required Elements on Bookstore................................passed
+Then Verify book list:....................................................passed
+When User search for "Java"...............................................passed
+Then Verify book list:....................................................passed
+When User search for "Selenium"...........................................passed
+Then Verify book list:....................................................passed]]></system-out>
+  </testcase>
+</testsuite>
